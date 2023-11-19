@@ -1,0 +1,88 @@
+﻿@using MyTaskPlanner.Entities.Models;
+@using MyTaskPlanner.Utilities;
+@model Reminder
+
+<form method="post" enctype="multipart/form-data">
+    <div class="modal fade" id="reminderModal" tabindex="-1" aria-labelledby="reminderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reminderModalLabel">Reminder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Repeat Reminder Checkbox -->
+                    <div class="form-check mb-3">
+                        <input type="checkbox" asp-for="@Model.IsReminderRepeat" class="form-check-input" id="reminderRepeatChkBox" />
+                        <label class="form-check-label" for="reminderRepeatChkBox">Repeat Reminder</label>
+                    </div>
+
+                    <!-- Reminder Type Dropdown -->
+                    <div id="reminderTypeDiv" class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label" for="reminderType">Select Interval:</label>
+                        </div>
+                        <div class="col-12">
+                            <select class="form-select" asp-for="ReminderRepeatType" asp-items="Html.GetEnumSelectList<ReminderRepeatType>()">
+                                <option selected="selected" value="">Select Interval --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Reminder Interval Input -->
+                    <div id="reminderIntervalDiv" class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label" for="reminderInterval">Repeat Interval:</label>
+                        </div>
+                        <div class="col-12">
+                            <input type="number" asp-for="@Model.ReminderRepeatInterval" class="form-control" id="reminderInterval" />
+                        </div>
+                    </div>
+
+                    <!-- Date and Time Inputs -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label" for="reminderTimeFrom">Select Date:</label>
+                            <input type="date" asp-for="@Model.ReminderDate" class="form-control" id="reminderTimeFrom" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="reminderTimeTo">Enter Time:</label>
+                            <input type="time" asp-for="@Model.ReminderTime" class="form-control" id="reminderTimeTo" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button asp-controller="Reminder" asp-action="Add" as-route-reminder="@Model" type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                        Add Reminder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $('document').ready(function () {
+        
+        $('#reminderTypeDiv').hide();
+        $('#reminderIntervalDiv').hide();
+        $('#reminderSeperator').hide();
+
+        $('#reminderRepeatChkBox').click(function () {
+            if (document.getElementById("reminderRepeatChkBox").checked == true) {
+                $('#reminderTypeDiv').show();
+                $('#reminderIntervalDiv').show();
+                $('#reminderSeperator').show();
+            }
+            else
+            {
+                $('#reminderTypeDiv').hide();
+                $('#reminderIntervalDiv').hide();
+                $('#reminderSeperator').hide();
+            }
+        });
+    });
+</script>

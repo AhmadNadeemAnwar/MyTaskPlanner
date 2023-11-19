@@ -1,0 +1,44 @@
+﻿@using MyTaskPlanner.Entities.Models;
+
+<!-- Include SignalR JavaScript library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
+
+<script>
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/reminderhub")
+        .build();
+
+    connection.on("ReceiveReminder", function (reminders) {
+        // Show a dialog box with the reminder message      
+
+        reminders.forEach(function (item, index) {
+
+            const toastHtml = `
+                <div id="toast-${index}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="toast-header">
+                    <i class="fa-solid fa-clock fa-lg" style="color: greenyellow;"></i>
+                    <strong class="me-auto m-2">Bootstrap</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+                  <div class="toast-body">${item.ticket.taskDescription}
+                      <div class="mt-2 pt-2 border-top">
+                              <button onclick="turnOffTheReminder(${item.reminderId})" type="button" class="btn btn-primary btn-sm">Don't repeat anymore</button>
+                    </div> </div>
+                </div>`;
+
+            // Append the toast to the body
+            document.getElementById('reminderToastDiv').innerHTML = toastHtml;
+
+            // Get the newly added toast element
+            const toastElement = document.getElementById(`toast-${index}`);
+
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        });
+    });
+
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+</script>

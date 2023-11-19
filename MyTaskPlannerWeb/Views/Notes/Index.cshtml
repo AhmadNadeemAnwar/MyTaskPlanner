@@ -1,0 +1,24 @@
+﻿@using MyTaskPlanner.Entities.ViewModels;
+@model NoteVM 
+
+<div class="container">
+    <div class="tab-content bg-transparent">
+        <div class="row">
+            @foreach(var item in Model.Notes)
+            {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.NoteName</h5>
+                        <h6>@item.NoteCreationDate</h6>
+                        <p class="card-text">
+                           @item.NoteDescription
+                        </p>
+                        <button type="button" class="btn btn-primary">Delete</button>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

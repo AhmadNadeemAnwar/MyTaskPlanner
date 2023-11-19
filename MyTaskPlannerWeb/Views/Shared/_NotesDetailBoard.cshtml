@@ -1,0 +1,153 @@
+﻿@using MyTaskPlanner.Entities.Models;
+@model IEnumerable<Note>
+
+    <div class="modal fade" id="notesBoardModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLabel">Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                        <form id="noteFilterForm" method="post" enctype="multipart/form-data">
+                            <input type="radio" class="form-check btn-check" name="note-options-outlined" id="all-notes" autocomplete="off">
+                            <label class="btn btn-outline-success" for="all-notes">All</label>
+
+                            <input type="radio" class="btn-check" name="note-options-outlined" id="note-read" autocomplete="off">
+                            <label class="btn btn-outline-success" for="note-read">Read</label>
+
+                            <input type="radio" class="btn-check" name="note-options-outlined" id="note-unread" autocomplete="off">
+                            <label class="btn btn-outline-success" for="note-unread">Unread</label>
+
+                        </form>
+                        </div>
+                        <div id="divNotesArea" class="row row-cols-1 row-cols-md-4 g-4 m-2">
+                            @foreach(var item in Model.OrderBy(p=>p.NotePriority))
+                            {
+                                <div class="col">
+                                    <div id="note-card-@item.NoteId" class="card text-dark bg-light" style="max-width: 18rem;">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <button disabled class="btn btn-secondary">@item.NoteCreationDate</button>
+                                                </div>
+                                                <div class="col-md-4 align-content-end">
+                                                    <a style="border-radius:50%;color:white;background-color:#00A36C" class="btn"><i class="fa-solid fa-bell"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">@item.NoteName</h5>
+                                            <p id="note-desc-@item.NoteId" class="@item.NoteDescription"></p>
+                                        </div>
+                                        <div class="card-footer">
+                                            @if(!item.NoteStatus)
+                                            {
+                                            <button onclick="markNoteComplete(@item.NoteId)" class=" btn btn-primary">
+                                                Mark Read</button>
+                                        }
+                                        else
+                                        {
+                                            <button disabled class=" btn btn-info">Already Read</button>
+                                        }
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    $('document').ready(function () {
+        $('#all-notes').on('click', () => {
+            $.ajax({
+                url: '@Url.Action("GetNotes","Notes", new {id = 0})',
+                method: 'GET',
+                success: function (data) {
+                    updateNotesUI(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        });
+
+        $('#note-read').on('click', () => {
+            $.ajax({
+                url: '@Url.Action("GetNotes","Notes", new {id = 1})',
+                method: 'GET',
+                success: function (data) {
+                    updateNotesUI(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        });
+
+        $('#note-unread').on('click', () => {
+            $.ajax({
+                url: '@Url.Action("GetNotes","Notes", new {id = 2})',
+                method: 'GET',
+                success: function (data) {
+                    updateNotesUI(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        });
+    });
+
+    function updateNotesUI(data) {
+        // Clear the existing UI section.
+        $('#divNotesArea').empty();
+
+        // Iterate through the data and update the UI section.
+
+        console.log(typeof data);
+
+        data.forEach(function (item) {
+
+            var noteHtml = '<div class="col">' +
+                '<div id="note-card-' + item.NoteId + '" class="card text-dark bg-light" style="max-width: 18rem;">' +
+                '<div class="card-header"> <div class="row"> <div class="col-md-8">' +
+                '<button disabled class="btn btn-secondary">' + item.NoteCreationDate + '</button>' +
+                '</div> <div class="col-md-4 align-content-end"> <a style="border-radius:50%;color:white;background-color:#00A36C;" class="btn"><i class="fa-solid fa-bell"></i></a> </div> </div> </div> <div class="card-body">' +
+                '<h5 class="card-title">' + item.NoteName + '</h5>' +
+                '<p class="' + item.NoteDescription + '"></p> </div> ' +
+                '<div class="card-footer" >' + (item.NoteStatus ? '<button disabled class="btn btn-info">Already Read</button>' : '<button onclick="markNoteComplete(' + item.NoteId + ')" class="btn btn-primary"> Mark Read</button>') +
+                '</div> </div> </div>';
+
+            $('#divNotesArea').append(noteHtml);
+        });
+    }
+
+    function markNoteComplete(noteid) {
+        var checkedRadio = $('input[name=note-options-outlined]:checked');
+        var noteFilterName = checkedRadio.attr('id');
+
+        $.ajax({
+            url: '@Url.Action("MarkNoteState","Notes")',
+            method: 'POST',
+            data: { id: noteid, noteFilterIds: noteFilterName },
+            success: function (data) {
+                updateNotesUI(data);
+                console.log('success');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+
+    }
+</script>

@@ -1,0 +1,244 @@
+﻿@using System.Collections;
+@using MyTaskPlanner.Utilities;
+@using MyTaskPlanner.Entities.ViewModels;
+@model TaskTicketVM
+
+<div class="row mb-2">
+
+   @* Add New Tasks Modal *@
+    <form method="post" enctype="multipart/form-data">
+        <input hidden asp-for="TaskTicket.TaskId" />
+        <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <h5 class="modal-title" id="taskModalLabel">New Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row m-3">
+                        <div class="row mb-3">
+                            <h6 class="p-0">Task Name</h6>
+                            <input asp-for="TaskTicket.TaskName" type="text" class="form-control" />
+                            <span asp-validation-for="TaskTicket.TaskName" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <h6 class="p-0">Task Description</h6>
+                            <input asp-for="TaskTicket.TaskDescription" type="text" class="form-control" />
+                            <span asp-validation-for="TaskTicket.TaskDescription" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <h6 class="p-0">Task Type</h6>
+                            <select class="form-select" asp-for="TaskTicket.TaskType" asp-items="Html.GetEnumSelectList<TaskType>()">
+                                <option selected="selected" value="">Please select --</option>
+                            </select>
+                            <span asp-validation-for="TaskTicket.TaskType" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                            Create
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <div class="row p-3">
+        <div class="col-auto">
+            <input onclick="showCardContent()" type="radio" class="btn-check" name="options-outlined" id="btn-cardview" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btn-cardview">Card View</label>
+            <hr id="underline-cardview" style="height:4px;border-width:0;color:gray;background-color:gray">
+        </div>
+
+
+        <div class="col-auto">
+            <input onclick="showGridContent()" type="radio" class="btn-check" name="options-outlined" id="btn-gridview" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btn-gridview">Grid View</label>
+            <hr id="underline-gridview" style="height:4px;border-width:0;color:gray;background-color:gray">
+        </div>
+
+    </div>
+
+    <div id="tasks-card-container" class="row">
+        @foreach(var item in Model.TaskTickets)
+        {
+            <div class="col-md-4 m-3">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <i class="fa-solid fa-list-check fa-lg" style="color: #081a2b;"></i>
+                                @* <button disabled style="background-color:#00A36C;color:white" class="btn">@item.TaskType.GetEnumDescription()</button> *@
+                                <button onclick="showReminderModal(@item.TaskId)" style="border-radius:50%;color:white;background-color:#00A36C" class="btn m-2"><i class="fa-solid fa-bell"></i></button>
+                                <div id="divContainerReminder"></div>
+                            </div>
+                            <div class="col-md-4" style="margin-top:8px">
+                                <a onclick="showTaskDetailModal(@item.TaskId)" style="background-color:#0dcaf0" class="btn fw-bold text-white">View Board</a>
+                                <div id="noteBoardDiv"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.TaskName</h5>
+                        <p class="card-text">@item.TaskDescription</p>
+                        <a asp-controller="Home" asp-action="Delete" asp-route-id="@item.TaskId" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                         <a style="height:35px;margin:10px;border-radius:50%;background-color:#8b57f2;color:white" class="btn"
+                           onclick="showNoteModal(@item.TaskId)">
+                            <i class="fa-solid fa-note-sticky"></i>
+                        </a> 
+                        <div id="divContainer"></div>
+                    </div>
+                </div>
+            </div>
+        }
+     </div>
+
+     <div id="tasks-grid-container" class="row">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Add Reminder</th>
+                    <th>Task Name</th>
+                    <th>Task Description</th>
+                    <th>Add Note</th>
+                    <th>View Notes</th>
+                    <th>Delete Task</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.TaskTickets?.Count() > 0)
+                {
+                    @foreach (var item in Model.TaskTickets)
+                    {
+                        <tr>
+                            <td>
+                                <button onclick="showReminderModal(@item.TaskId)" style="border-radius:50%;color:white;background-color:#00A36C" class="btn m-2"><i class="fa-solid fa-bell"></i></button>
+                                <div id="divContainerReminder"></div>
+                            </td>
+                            <td>@item.TaskName</td>
+                            <td>@item.TaskDescription</td>
+                            <td>@item.TaskDescription</td>
+                            <td>
+                                <a style="height:35px;margin:10px;border-radius:50%;background-color:#8b57f2;color:white" class="btn"
+                                onclick="showNoteModal(@item.TaskId)">
+                                    <i class="fa-solid fa-note-sticky"></i>
+                                </a>
+                            </td>
+                            <td>
+                                <a onclick="showTaskDetailModal(@item.TaskId)" style="background-color:#0dcaf0" class="btn fw-bold text-white">View Board</a>
+                                <div id="noteBoardDiv"></div>
+                            </td>
+                            <td>
+                                <a asp-controller="Home" asp-action="Delete" asp-route-id="@item.TaskId" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td>No content</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+     </div>
+
+     <div class="container">
+        <div class="text-end">
+            <button style="position:fixed;right:10px;bottom:10px;border-radius:50%" type="button" class="btn btn-primary btn-lg btn-floating" data-bs-toggle="modal" data-bs-target="#taskModal">
+                <i class="fa-sharp fa-solid fa-plus"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    window.addEventListener("load", (event) => {
+        $('#btn-cardview').prop("checked", true).trigger("click");
+    });
+
+
+    function showCardContent()
+    {
+        $('#tasks-card-container').show();
+        $('#tasks-grid-container').hide();
+        $('#underline-cardview').css('background-color', '#3B71CA');
+        $('#underline-cardview').css('color', '#3B71CA');
+        $('#underline-gridview').css('background-color', 'gray');
+    }
+    
+    function showGridContent()
+    {
+        $('#tasks-grid-container').show();
+        $('#tasks-card-container').hide();
+        $('#underline-gridview').css('background-color', '#3B71CA');
+        $('#underline-gridview').css('color', '#3B71CA');
+        $('#underline-cardview').css('background-color', 'gray');
+    }
+
+    function showNoteModal(taskId) {
+        $.ajax({
+            url: '@Url.Action("ShowDialog", "Notes")',
+            type: "POST",
+            data: { taskId },
+
+            success: function (arr) {
+                $('#divContainer').html(arr); //Load your HTML to DivContainer
+                $('#noteModal').modal('show'); //Once loaded, show the modal
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function showTaskDetailModal(taskId) {
+        $.ajax({
+            url: '@Url.Action("DisplayNotesBoard", "Notes")',
+            type: "GET",
+            data: { taskId },
+
+            success: function (arr) {
+                $('#noteBoardDiv').html(arr); //Load your HTML to DivContainer
+                $('#notesBoardModal').modal('show'); //Once loaded, show the modal
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function showReminderModal(taskId) {
+        $.ajax({
+            url: '@Url.Action("ShowReminderDialog", "Reminder")',
+            type: "POST",
+            data: { taskId },
+
+            success: function (data) {
+                $('#divContainerReminder').html(data); //Load your HTML to DivContainer
+                $('#reminderModal').modal('show'); //Once loaded, show the modal
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function turnOffTheReminder(reminderId) {
+        $.ajax({
+            url: '@Url.Action("SetReminderOffByID", "Reminder")',
+            type: "POST",
+            data: { reminderId },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+</script>
+

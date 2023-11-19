@@ -1,0 +1,67 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Calendar</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <!-- Give your calendar container an ID -->
+            <div id="calendarContainer"></div>
+        </div>
+    </div>
+</div>
+<script type="module">
+
+    // Wrap the entire code in a function to encapsulate the variables
+    function initializeCalendar() {
+        let eventArr = [];
+
+        $.ajax({
+            url: '@Url.Action("GetCalendarTasks", "Home")',
+            type: "GET",
+            success: function (arr) {
+                arr.forEach(function (item) {
+                    let formattedDate = new Date(item.ReminderDate).toLocaleDateString('en-CA', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+
+                    let eventObject = {
+                        start: formattedDate,
+                        title: item.Ticket.TaskName
+                    };
+                    eventArr.push(eventObject);
+                });
+
+                // Initialize the calendar after the AJAX request is complete
+                let calendarContainer = document.getElementById('calendarContainer');
+                let calendar = new FullCalendar.Calendar(calendarContainer, {
+                    initialView: 'dayGridMonth',
+                    themeSystem: 'bootstrap5',
+                    events: eventArr,
+                });
+
+                calendar.render();
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    let fullCalendarPromise = new Promise((resolve, reject) => {
+        let fullCalendarScript = document.createElement('script');
+        fullCalendarScript.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@5.7.2/main.js';
+        fullCalendarScript.onload = resolve;
+        fullCalendarScript.onerror = reject;
+        document.head.appendChild(fullCalendarScript);
+    });
+
+    fullCalendarPromise.then(() => {
+        // Call the function to initialize the calendar after FullCalendar is loaded
+        initializeCalendar();
+    });
+
+</script>

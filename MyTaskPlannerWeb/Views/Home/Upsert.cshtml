@@ -1,0 +1,49 @@
+﻿@using MyTaskPlanner.Utilities;
+@model MyTaskPlanner.Entities.Models.TaskTickets
+
+<form method="post" enctype="multipart/form-data">
+    <input hidden asp-for="TaskId" />
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create a Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="row mb-3">
+                                <h3 class="p-0">Task Name</h3>
+                                <input asp-for="TaskName" type="text" class="form-control" />
+                                <span asp-validation-for="TaskName" class="text-danger"></span>
+                            </div>
+                            <div class="row mb-3">
+                                <h3 class="p-0">Task Description</h3>
+                                <input asp-for="TaskDescription" type="text" class="form-control" />
+                                <span asp-validation-for="TaskDescription" class="text-danger"></span>
+                            </div>
+                            <div class="row mb-3">
+                                <h3 class="p-0">Task Type</h3>
+                                <select asp-for="TaskType" asp-items="Html.GetEnumSelectList<TaskType>()">
+                                    <option selected="selected" value="">Please select --</option>
+                                </select>
+                                <span asp-validation-for="TaskType" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="row mb-3">
+                        <button type="submit" class="btn btn-primary" style="width:150px">
+                            Create Task
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</form>

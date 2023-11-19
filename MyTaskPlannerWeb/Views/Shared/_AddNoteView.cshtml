@@ -1,0 +1,42 @@
+﻿@using MyTaskPlanner.Entities.Models;
+@model Note
+
+<form method="post" enctype="multipart/form-data">
+    <input hidden asp-for="NoteId" />
+    <input hidden asp-for="TaskId" />
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLabel">Add Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row m-3">
+                        <div class="row mb-3">
+                            <h6 class="p-0">Note Ttile</h6>
+                            <input asp-for="NoteName" type="text" class="form-control" />
+                            <span asp-validation-for="NoteName" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <h6 class="p-0">Description</h6>
+                            <input asp-for="NoteDescription" type="text" class="form-control" />
+                            <span asp-validation-for="NoteDescription" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <h6 class="p-0">Note Priority</h6>
+                            <input asp-for="NotePriority" type="number" class="form-control" />
+                            <span asp-validation-for="NotePriority" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" asp-controller="Notes" asp-action="Create" data-bs-dismiss="modal">
+                        Create Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

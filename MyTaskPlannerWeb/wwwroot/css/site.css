@@ -1,0 +1,83 @@
+/* Set the base font size */
+html {
+    
+}
+
+/* Adjust font size for larger screens */
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Ensure proper positioning and height for the HTML element */
+html {
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
+}
+
+/* Adjust body margin for better spacing */
+body {
+    margin-bottom: 60px;
+}
+
+/* Change the font size of the calendar */
+#calendarContainer {
+    font-size: 16px;
+}
+
+/* Change the background color of the calendar */
+#calendarContainer .fc-day-grid {
+    background-color: yellow;
+}
+
+/* Change the color of the calendar header */
+    #calendarContainer .fc-toolbar {
+        background-color: white;
+        border: none;
+        margin: 5px;
+    }
+
+#calendarContainer .fc-toolbar-title {
+    margin:5px;
+}
+
+    #calendarContainer .fc-prev-button {
+        color: white;
+        margin: 5px;
+        border: none;
+        border-radius: 50%;
+        background-color: #20c997;
+    }
+
+    #calendarContainer .fc-next-button {
+        color: white;
+        margin: 5px;
+        border: none;
+        border-radius: 50%;
+        background-color: #20c997;
+    }
+
+    #calendarContainer .fc-today-button {
+        color: white;
+        margin: 5px;
+        border: none;
+        background-color: #0d6efd;
+        text-transform: capitalize;
+    }
+
+    #calendarContainer .fc-col-header-cell-cushion {
+        color: black;
+        text-decoration:none;
+    }
+
+    #calendarContainer .fc-daygrid-day-number {
+        text-decoration: none;
+        color:black;
+    }
+
+    #calendarContainer .fc-today-bg-color {
+        color: yellow;
+    }
+
